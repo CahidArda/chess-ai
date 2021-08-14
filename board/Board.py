@@ -19,7 +19,7 @@ class Board:
         tuples = []
         for y in range(self.size):
             for x in range(self.size):
-                tile = self.get_tile(x, y)
+                tile = self.__get_tile(x, y)
                 if tile != None and tile.player == self.next_player:
                     tuples.append((tile, x, y))
         return tuples
@@ -44,10 +44,10 @@ class Board:
                 
                 # straight
                 y2 = y+y_direction
-                if self.__tile_on_board(x, y2) and self.tile_is_empty(x, y2):
+                if self.__tile_on_board(x, y2) and self.__tile_is_empty(x, y2):
                     moves.append(Move(x, y, x, y2))
                     y2 += y_direction
-                    if not piece.moved_before and self.__tile_on_board(x, y2) and self.tile_is_empty(x, y2):
+                    if not piece.moved_before and self.__tile_on_board(x, y2) and self.__tile_is_empty(x, y2):
                         moves.append(Move(x, y, x, y2))
 
         return moves
@@ -67,19 +67,19 @@ class Board:
 
     """
     def __alied_piece_in_tile(self, x, y):
-        tile = get_tile(x, y)
+        tile = __get_tile(x, y)
         return tile != None and self.next_player == tile.player
     """
 
     def __opponent_piece_in_tile(self, x, y):
-        tile = self.get_tile(x, y)
+        tile = self.__get_tile(x, y)
         return tile != None and self.next_player != tile.player
 
-    def get_tile(self, x, y):
+    def __get_tile(self, x, y):
         return self.tiles[y][x]
     
-    def tile_is_empty(self, x, y):
-        return self.get_tile(x, y) == None
+    def __tile_is_empty(self, x, y):
+        return self.__get_tile(x, y) == None
 
     def __fill_board(self):
         pieces_config = self.config['pieces']
@@ -87,7 +87,7 @@ class Board:
 
             # adding pawns
             pawn_config = pieces_config['pawn']
-            self.add_piece(
+            self.__add_piece(
                 column, 1,
                 Piece(
                     pawn_config['piece_str'],
@@ -95,7 +95,7 @@ class Board:
                     1),
                 mirror = True)
 
-    def add_piece(self, x, y, piece, mirror=False):
+    def __add_piece(self, x, y, piece, mirror=False):
         self.pieces.append(piece)
         self.tiles[y][x] = piece
 

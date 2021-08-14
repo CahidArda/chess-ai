@@ -22,7 +22,7 @@ class Board:
     # Get Moves
     # ---------------
 
-    def __get_piece_loc_tuples(self, player = None):
+    def get_piece_loc_tuples(self, player = None):
         tuples = []
         for y in range(self.size):
             for x in range(self.size):
@@ -32,7 +32,7 @@ class Board:
         return tuples
 
     def __get_piece_loc_tuples_for_next_player(self):
-        return self.__get_piece_loc_tuples(self.next_player)
+        return self.get_piece_loc_tuples(self.next_player)
 
     def get_moves_for_next_player(self):
         moves = []
@@ -85,25 +85,6 @@ class Board:
         tile = __get_tile(x, y)
         return tile != None and self.next_player == tile.player
     """
-
-    # ---------------
-    # Score
-    # ---------------
-
-    def score_for_next_player(self):
-        return self.__positional_heuristic_score(self.next_player) 
-
-    def __positional_heuristic_score(self, player):
-        """
-        Calculate score for player 1, then change the sign depending on player parameter
-        """
-        score = 0
-        positional_score = self.config['scoring']['positional_score']
-        for piece, x, y in self.__get_piece_loc_tuples():
-            d_score = piece.points
-            d_score += (y if piece.player==1 else (self.size-y-1)) * positional_score
-            score += d_score if piece.player == 1 else -d_score
-        return score if player == 1 else -score 
 
     # ---------------
     # Private Methods

@@ -2,6 +2,7 @@
 import json
 import sys
 from random import randint
+from heuristics.positional_heuristic import positional_heuristic
 
 config = None
 
@@ -23,7 +24,8 @@ for i in range(10):
     board.apply_move(move)
     print("Applied %s" % move)
     print(board)
-    print("Score: %f" % board.score_for_next_player())
+    piece_loc_tuples = board.get_piece_loc_tuples()
+    print("Score: %f" % positional_heuristic(piece_loc_tuples, board.next_player, board.config))
     print(" ---------------")
 
 for i in range(10):

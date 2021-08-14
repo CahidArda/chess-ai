@@ -9,4 +9,4 @@ def positional_heuristic(piece_loc_tuples, player, config):
         d_score = piece.points
         d_score += (y if piece.player==1 else (config['board']['size']-y-1)) * positional_score
         score += d_score if piece.player == 1 else -d_score
-    return score if player == 1 else -score 
+    return score

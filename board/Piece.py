@@ -1,13 +1,14 @@
 
 class Piece:
 
-    def __init__(self, pieceStr, points, player):
-        self.pieceStr = pieceStr
+    def __init__(self, piece_str, points, player):
+        self.piece_str = piece_str
         self.points = points
         self.player = player
+        self.moved_before = False
 
     def copy(self):
-        return Piece(self.pieceStr, self.points, self.player)
+        return Piece(self.piece_str, self.points, self.player)
 
     def __str__(self):
-        return self.pieceStr + self.player
+        return self.piece_str + self.player

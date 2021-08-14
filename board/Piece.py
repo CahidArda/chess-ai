@@ -11,4 +11,4 @@ class Piece:
         return Piece(self.piece_str, self.points, self.player)
 
     def __str__(self):
-        return self.piece_str + self.player
+        return self.piece_str + str(self.player)

@@ -10,7 +10,8 @@ class Board:
         self.size = self.config['board']['size']
         self.tiles = [[None for i in range(self.size)] for j in range(self.size)]
         self.pieces = []
-        self.next_player = "1"
+        self.past_moves = []
+        self.next_player = 0
 
         self.__fill_board()
 
@@ -33,13 +34,13 @@ class Board:
             # checking pawns
             if piece.piece_str == pieces_config['pawn']['piece_str']:
                 # diagonals
-                y_direction = 1 if self.next_player=="1" else -1
+                y_direction = 1 if self.next_player==1 else -1
                 for dx in [-1, 1]:
                     x2 = x + dx
                     y2 = y + y_direction
 
                     if self.__tile_on_board(x2, y2) and self.__opponent_piece_in_tile(x2, y2):
-                        moves.append(Move(x, y, x2, y2, self.get_tile(x2, y2)))
+                        moves.append(Move(x, y, x2, y2))
                 
                 # straight
                 y2 = y+y_direction
@@ -51,14 +52,18 @@ class Board:
 
         return moves
 
-    def add_piece(self, x, y, piece, mirror=False):
-        self.pieces.append(piece)
-        self.tiles[y][x] = piece
+    def apply_move(self, move):
+        self.past_moves.append(move)
+        move.removed_piece = self.tiles[move.y2][move.x2]
+        self.tiles[move.y2][move.x2] = self.tiles[move.y1][move.x1]
+        self.tiles[move.y1][move.x1] = None
+        self.next_player = 1 - self.next_player
 
-        if mirror:
-            copy_piece = piece.copy()
-            copy_piece.player = '0'
-            self.tiles[self.size - y - 1][x] = copy_piece
+    def reverse_last_move(self):
+        move = self.past_moves.pop()
+        self.tiles[move.y1][move.x1] = self.tiles[move.y2][move.x2]
+        self.tiles[move.y2][move.x2] = move.removed_piece
+        self.next_player = 1 - self.next_player
 
     """
     def __alied_piece_in_tile(self, x, y):
@@ -87,8 +92,17 @@ class Board:
                 Piece(
                     pawn_config['piece_str'],
                     pawn_config['points'],
-                    "1"),
+                    1),
                 mirror = True)
+
+    def add_piece(self, x, y, piece, mirror=False):
+        self.pieces.append(piece)
+        self.tiles[y][x] = piece
+
+        if mirror:
+            copy_piece = piece.copy()
+            copy_piece.player = 0
+            self.tiles[self.size - y - 1][x] = copy_piece
 
     def __tile_on_board(self, x, y):
         if x < 0 or self.size <= x:

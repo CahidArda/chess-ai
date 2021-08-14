@@ -4,8 +4,11 @@
     },
     "pieces": {
         "pawn": {
-            "points": 1,
-            "piece_str": "p"
+            "piece_str": "p",
+            "points": 1
         }
+    },
+    "scoring": {
+        "positional_score": 0.5
     }
 }

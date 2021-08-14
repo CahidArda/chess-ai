@@ -5,8 +5,11 @@ import json
 class Board:
 
     def __init__(self):
+        
         with open("config.json") as file:
             self.config = json.load(file)
+        self.score_d = {piece["piece_str"]:piece["points"] for piece in self.config['pieces'].values()}
+        
         self.size = self.config['board']['size']
         self.tiles = [[None for i in range(self.size)] for j in range(self.size)]
         self.pieces = []
@@ -15,14 +18,21 @@ class Board:
 
         self.__fill_board()
 
-    def __get_piece_loc_tuples_for_next_player(self):
+    # ---------------
+    # Get Moves
+    # ---------------
+
+    def __get_piece_loc_tuples(self, player = None):
         tuples = []
         for y in range(self.size):
             for x in range(self.size):
                 tile = self.__get_tile(x, y)
-                if tile != None and tile.player == self.next_player:
+                if tile != None and (player==None or tile.player == player):
                     tuples.append((tile, x, y))
         return tuples
+
+    def __get_piece_loc_tuples_for_next_player(self):
+        return self.__get_piece_loc_tuples(self.next_player)
 
     def get_moves_for_next_player(self):
         moves = []
@@ -52,6 +62,10 @@ class Board:
 
         return moves
 
+    # ---------------
+    # Apply Moves
+    # ---------------
+
     def apply_move(self, move):
         self.past_moves.append(move)
 
@@ -71,6 +85,29 @@ class Board:
         tile = __get_tile(x, y)
         return tile != None and self.next_player == tile.player
     """
+
+    # ---------------
+    # Score
+    # ---------------
+
+    def score_for_next_player(self):
+        return self.__positional_heuristic_score(self.next_player) 
+
+    def __positional_heuristic_score(self, player):
+        """
+        Calculate score for player 1, then change the sign depending on player parameter
+        """
+        score = 0
+        positional_score = self.config['scoring']['positional_score']
+        for piece, x, y in self.__get_piece_loc_tuples():
+            d_score = piece.points
+            d_score += (y if piece.player==1 else (self.size-y-1)) * positional_score
+            score += d_score if piece.player == 1 else -d_score
+        return score if player == 1 else -score 
+
+    # ---------------
+    # Private Methods
+    # ---------------
 
     def __opponent_piece_in_tile(self, x, y):
         tile = self.__get_tile(x, y)

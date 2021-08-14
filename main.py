@@ -23,6 +23,8 @@ for i in range(10):
     board.apply_move(move)
     print("Applied %s" % move)
     print(board)
+    print("Score: %f" % board.score_for_next_player())
+    print(" ---------------")
 
 for i in range(10):
     board.reverse_last_move()

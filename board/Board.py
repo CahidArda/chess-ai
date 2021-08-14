@@ -47,13 +47,14 @@ class Board:
                 if self.__tile_on_board(x, y2) and self.__tile_is_empty(x, y2):
                     moves.append(Move(x, y, x, y2))
                     y2 += y_direction
-                    if not piece.moved_before and self.__tile_on_board(x, y2) and self.__tile_is_empty(x, y2):
+                    if y==(1 if self.next_player == 1 else self.size-2) and self.__tile_on_board(x, y2) and self.__tile_is_empty(x, y2):
                         moves.append(Move(x, y, x, y2))
 
         return moves
 
     def apply_move(self, move):
         self.past_moves.append(move)
+
         move.removed_piece = self.tiles[move.y2][move.x2]
         self.tiles[move.y2][move.x2] = self.tiles[move.y1][move.x1]
         self.tiles[move.y1][move.x1] = None

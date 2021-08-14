@@ -16,4 +16,5 @@ from board import Board
 
 board = Board()
 print(board)
-board.get_all_possible_moves()
+for move in board.get_moves_for_next_player():
+    print(move)

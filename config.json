@@ -1,3 +1,11 @@
 {
-    "game": "checkers"
+    "board": {
+        "size": 6
+    },
+    "pieces": {
+        "pawn": {
+            "points": 1,
+            "piece_str": "p"
+        }
+    }
 }

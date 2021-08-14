@@ -12,9 +12,8 @@ except:
     print("ERROR: config file not found.")
     sys.exit()
 
-from games.checkers import CheckersGame
 from board import Board
 
-game = CheckersGame()
-board = Board(game)
+board = Board()
 print(board)
+board.get_all_possible_moves()

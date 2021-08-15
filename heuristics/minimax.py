@@ -1,6 +1,6 @@
 from heuristics.positional_heuristic import positional_heuristic
 
-def minimax(board, depth, alpha = -100000, beta = 100000):
+def minimax(board, depth=3, alpha = -100000, beta = 100000):
     """
     Apply minimax with alpha-beta pruning to evaluate a board position
     """

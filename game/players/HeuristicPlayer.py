@@ -6,9 +6,6 @@ class HeuristicPlayer:
         self.args = args
 
     def get_move(self, board):
-        return self.get_best_move_for_next_player(board)
-
-    def get_best_move_for_next_player(self, board):
         best_move = None
 
         if board.next_player == 1:
@@ -28,7 +25,7 @@ class HeuristicPlayer:
                 board.apply_move(move)
 
                 score = self.heuristic(board, **self.args)
-                if min_score < score:
+                if score < min_score:
                     best_move = move
                     min_score = score
 

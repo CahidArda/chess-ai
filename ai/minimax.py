@@ -1,4 +1,4 @@
-from heuristics.positional_heuristic import positional_heuristic
+from .heuristics.positional_heuristic import positional_heuristic
 
 def minimax(board, depth=3, alpha = -100000, beta = 100000):
     """

@@ -87,8 +87,17 @@ class Board:
                             pass
                         x2 = x + dx
                         y2 = y + dy
-                        if self.__tile_on_board(x2, y2) and self.__tile_is_empty(x2, y2):
+                        if self.__tile_on_board(x2, y2) and not self.__allied_piece_in_tile(x2, y2):
                             moves.append(Move(x, y, x2, y2))
+
+            if piece.piece_str == pieces_config['knight']['piece_str']:
+                for dx, dy in [(2,1), (1,2)]:
+                    for x_sign, y_sign in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
+                        x2 = x + x_sign * dx
+                        y2 = y + y_sign * dy
+                        if self.__tile_on_board(x2, y2) and not self.__allied_piece_in_tile(x2, y2):
+                            moves.append(Move(x, y, x2, y2))
+
 
         return moves
 
@@ -113,12 +122,6 @@ class Board:
         self.tiles[move.y2][move.x2] = move.removed_piece
         self.next_player = 1 - self.next_player
 
-    """
-    def __alied_piece_in_tile(self, x, y):
-        tile = __get_tile(x, y)
-        return tile != None and self.next_player == tile.player
-    """
-
     # ---------------
     # Private Methods
     # ---------------
@@ -126,6 +129,11 @@ class Board:
     def __opponent_piece_in_tile(self, x, y):
         tile = self.__get_tile(x, y)
         return tile != None and self.next_player != tile.player
+
+    def __allied_piece_in_tile(self, x, y):
+        tile = self.__get_tile(x, y)
+        return tile != None and self.next_player == tile.player
+
 
     def __get_tile(self, x, y):
         return self.tiles[y][x]
@@ -135,27 +143,20 @@ class Board:
 
     def __fill_board(self):
         pieces_config = self.config['pieces']
-        for column in range(self.size):
+        for piece_config in pieces_config.values():
 
-            # adding pawns
-            pawn_config = pieces_config['pawn']
-            self.__add_piece(
-                column, 1,
-                Piece(
-                    pawn_config['piece_str'],
-                    pawn_config['points'],
-                    1),
-                mirror = True)
-
-        # add king
-        king_config = pieces_config['king']
-        self.__add_piece(
-            4, 0,
-            Piece(
-                king_config['piece_str'],
-                king_config['points'],
-                1),
-            mirror = True)
+            positions_config = piece_config['positions']
+            for column in positions_config['columns']:
+                self.__add_piece(
+                    column,
+                    positions_config['row'],
+                    Piece(
+                        piece_config['piece_str'],
+                        piece_config['points'],
+                        1
+                    ),
+                    mirror = True
+                )
 
     def __add_piece(self, x, y, piece, mirror=False):
         self.pieces.append(piece)

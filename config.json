@@ -5,11 +5,27 @@
     "pieces": {
         "pawn": {
             "piece_str": "p",
-            "points": 1
+            "points": 1,
+            "positions": {
+                "row": 1,
+                "columns": [0,1,2,3,4,5,6,7]
+            }
         },
         "king": {
             "piece_str": "k",
-            "points": 1000
+            "points": 1000,
+            "positions": {
+                "row": 0,
+                "columns": [4]
+            }
+        },
+        "knight": {
+            "piece_str": "h",
+            "points": 3,
+            "positions": {
+                "row": 0,
+                "columns": [1, 6]
+            }
         }
     },
     "scoring": {

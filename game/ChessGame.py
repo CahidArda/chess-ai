@@ -9,9 +9,9 @@ class ChessGame:
         self.players = players
 
     def run_game(self, n_moves = 10):
+        print(self.board)
         for i in range(n_moves):
-            print(self.board)
             self.board.apply_move(self.players[0].get_move(self.board))
             print(self.board)
             self.board.apply_move(self.players[1].get_move(self.board))
-        
+            print(self.board)

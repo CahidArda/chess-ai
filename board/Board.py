@@ -16,6 +16,9 @@ class Board:
         self.past_moves = []
         self.next_player = 0
 
+        self.piece_loc_tuples_updated = False
+        self.pieec_loc_tuples = [[], []]
+
         self.__fill_board()
 
     # ---------------
@@ -23,13 +26,30 @@ class Board:
     # ---------------
 
     def get_piece_loc_tuples(self, player = None):
-        tuples = []
+        if not self.piece_loc_tuples_updated:
+            self.__update_piece_loc_tuples()
+        
+        if player == None:
+            all_tuples = []
+            all_tuples.extend(self.piece_loc_tuples[0])
+            all_tuples.extend(self.piece_loc_tuples[1])
+            return all_tuples
+        else:
+            return self.piece_loc_tuples[player]        
+
+
+    def __update_piece_loc_tuples(self):
+        if self.piece_loc_tuples_updated:
+            return
+        self.piece_loc_tuples_updated = True
+
+        self.piece_loc_tuples = [[], []]
         for y in range(self.size):
             for x in range(self.size):
                 tile = self.__get_tile(x, y)
-                if tile != None and (player==None or tile.player == player):
-                    tuples.append((tile, x, y))
-        return tuples
+                if tile != None:
+                    self.piece_loc_tuples[tile.player].append((tile, x, y))
+        
 
     def __get_piece_loc_tuples_for_next_player(self):
         return self.get_piece_loc_tuples(self.next_player)
@@ -68,6 +88,7 @@ class Board:
 
     def apply_move(self, move):
         self.past_moves.append(move)
+        self.piece_loc_tuples_updated = False
 
         move.removed_piece = self.tiles[move.y2][move.x2]
         self.tiles[move.y2][move.x2] = self.tiles[move.y1][move.x1]
@@ -76,6 +97,8 @@ class Board:
 
     def reverse_last_move(self):
         move = self.past_moves.pop()
+        self.piece_loc_tuples_updated = False
+
         self.tiles[move.y1][move.x1] = self.tiles[move.y2][move.x2]
         self.tiles[move.y2][move.x2] = move.removed_piece
         self.next_player = 1 - self.next_player

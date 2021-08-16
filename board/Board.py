@@ -90,6 +90,7 @@ class Board:
                         if self.__tile_on_board(x2, y2) and not self.__allied_piece_in_tile(x2, y2):
                             moves.append(Move(x, y, x2, y2))
 
+            # checking knight
             if piece.piece_str == pieces_config['knight']['piece_str']:
                 for dx, dy in [(2,1), (1,2)]:
                     for x_sign, y_sign in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
@@ -98,8 +99,36 @@ class Board:
                         if self.__tile_on_board(x2, y2) and not self.__allied_piece_in_tile(x2, y2):
                             moves.append(Move(x, y, x2, y2))
 
+            # checking rook
+            if piece.piece_str == pieces_config['rook']['piece_str']:
+                moves.extend(self.__search_perpendicular_moves(x,y))
 
         return moves
+
+    def __search_perpendicular_moves(self, x, y):
+        return self.__search_offset_recursively(x,y, [(1,0), (0,1), (-1,0), (0,-1)])
+
+    def __search_diagonal_moves(self, x, y):
+        return self.__search_offset_recursively(x,y, [(1,1), (1,-1), (-1,1), (-1,-1)])
+
+    def __search_offset_recursively(self, x, y, offsets):
+        moves = []
+        for dx, dy in offsets:
+            x2 = x + dx
+            y2 = y + dy
+            while self.__tile_on_board(x2, y2):
+
+                if self.__opponent_piece_in_tile(x2, y2):
+                    moves.append(Move(x, y, x2, y2))
+                    break
+                elif self.__allied_piece_in_tile(x2, y2):
+                    break
+
+                x2 += dx
+                y2 += dy
+
+        return moves
+
 
     # ---------------
     # Apply Moves

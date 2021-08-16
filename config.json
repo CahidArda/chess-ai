@@ -12,15 +12,23 @@
             }
         },
         "king": {
-            "piece_str": "k",
+            "piece_str": "K",
             "points": 1000,
             "positions": {
                 "row": 0,
                 "columns": [4]
             }
         },
+        "rook": {
+            "piece_str": "r",
+            "points": 4,
+            "positions": {
+                "row": 0,
+                "columns": [0,7]
+            }
+        },
         "knight": {
-            "piece_str": "h",
+            "piece_str": "k",
             "points": 3,
             "positions": {
                 "row": 0,

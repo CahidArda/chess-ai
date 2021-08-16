@@ -90,6 +90,10 @@ class Board:
                         if self.__tile_on_board(x2, y2) and not self.__allied_piece_in_tile(x2, y2):
                             moves.append(Move(x, y, x2, y2))
 
+            # checking rook
+            if piece.piece_str == pieces_config['rook']['piece_str']:
+                moves.extend(self.__search_perpendicular_moves(x,y))
+
             # checking knight
             if piece.piece_str == pieces_config['knight']['piece_str']:
                 for dx, dy in [(2,1), (1,2)]:
@@ -99,9 +103,15 @@ class Board:
                         if self.__tile_on_board(x2, y2) and not self.__allied_piece_in_tile(x2, y2):
                             moves.append(Move(x, y, x2, y2))
 
-            # checking rook
-            if piece.piece_str == pieces_config['rook']['piece_str']:
+            # checking bishop
+            if piece.piece_str == pieces_config['bishop']['piece_str']:
+                moves.extend(self.__search_diagonal_moves(x,y))
+
+            # checking queen
+            if piece.piece_str == pieces_config['queen']['piece_str']:
                 moves.extend(self.__search_perpendicular_moves(x,y))
+                moves.extend(self.__search_diagonal_moves(x,y))
+
 
         return moves
 
@@ -123,6 +133,8 @@ class Board:
                     break
                 elif self.__allied_piece_in_tile(x2, y2):
                     break
+
+                moves.append(Move(x, y, x2, y2))
 
                 x2 += dx
                 y2 += dy

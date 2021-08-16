@@ -34,6 +34,22 @@
                 "row": 0,
                 "columns": [1, 6]
             }
+        },
+        "bishop": {
+            "piece_str": "b",
+            "points": 3,
+            "positions": {
+                "row": 0,
+                "columns": [2, 5]
+            }
+        },
+        "queen": {
+            "piece_str": "Q",
+            "points": 10,
+            "positions": {
+                "row": 0,
+                "columns": [3]
+            }
         }
     },
     "scoring": {

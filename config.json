@@ -1,11 +1,15 @@
 {
     "board": {
-        "size": 6
+        "size": 8
     },
     "pieces": {
         "pawn": {
             "piece_str": "p",
             "points": 1
+        },
+        "king": {
+            "piece_str": "k",
+            "points": 1000
         }
     },
     "scoring": {

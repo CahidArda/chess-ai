@@ -17,7 +17,6 @@ class Board:
         self.next_player = 0
 
         self.piece_loc_tuples_updated = False
-        self.pieec_loc_tuples = [[], []]
 
         self.__fill_board()
 
@@ -80,6 +79,17 @@ class Board:
                     if y==(1 if self.next_player == 1 else self.size-2) and self.__tile_on_board(x, y2) and self.__tile_is_empty(x, y2):
                         moves.append(Move(x, y, x, y2))
 
+            # checking king
+            if piece.piece_str == pieces_config['king']['piece_str']:
+                for dx in range(-1, 2):
+                    for dy in range(-1, 2):
+                        if dx==0 and dy==0:
+                            pass
+                        x2 = x + dx
+                        y2 = y + dy
+                        if self.__tile_on_board(x2, y2) and self.__tile_is_empty(x2, y2):
+                            moves.append(Move(x, y, x2, y2))
+
         return moves
 
     # ---------------
@@ -136,6 +146,16 @@ class Board:
                     pawn_config['points'],
                     1),
                 mirror = True)
+
+        # add king
+        king_config = pieces_config['king']
+        self.__add_piece(
+            4, 0,
+            Piece(
+                king_config['piece_str'],
+                king_config['points'],
+                1),
+            mirror = True)
 
     def __add_piece(self, x, y, piece, mirror=False):
         self.pieces.append(piece)

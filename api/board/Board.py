@@ -1,15 +1,14 @@
 from .Piece import Piece
 from .Move import Move
-import json
+
 
 class Board:
 
-    def __init__(self):
+    def __init__(self, config):
         
-        with open("config.json") as file:
-            self.config = json.load(file)
+        self.config = config
+
         self.score_d = {piece["piece_str"]:piece["points"] for piece in self.config['pieces'].values()}
-        
         self.size = self.config['board']['size']
         self.tiles = [[None for i in range(self.size)] for j in range(self.size)]
         self.pieces = [[], []]
@@ -224,7 +223,7 @@ class Board:
         return True   
 
     def __str__(self):
-        string = "    %s\n" % "  ".join([str(i) for i in range(self.size)])
+        string = "    %s\n" % "  ".join([chr(ord('a') + i) for i in range(self.size)])
         for y in range(self.size):
             string += "%d:  %s\n" % (y, " ".join(["--" if tile==None else str(tile) for tile in self.tiles[y]]))
         for player in [0, 1]:

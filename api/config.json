@@ -54,5 +54,8 @@
     },
     "scoring": {
         "positional_score": 0.5
+    },
+    "result": {
+        "save_moves_to": "moves.json"
     }
 }

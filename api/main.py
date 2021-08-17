@@ -16,6 +16,6 @@ except:
     print("ERROR: config file not found.")
     sys.exit()
 
-game = ChessGame((HeuristicPlayer(minimax), HeuristicPlayer(positional_heuristic)))
+game = ChessGame((HeuristicPlayer(minimax), HeuristicPlayer(minimax)))
 #game = ChessGame((HumanPlayer(), HeuristicPlayer(minimax)))
-game.run_game(5)
+game.run_game(20)

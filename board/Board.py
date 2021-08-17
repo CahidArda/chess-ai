@@ -12,11 +12,9 @@ class Board:
         
         self.size = self.config['board']['size']
         self.tiles = [[None for i in range(self.size)] for j in range(self.size)]
-        self.pieces = []
+        self.pieces = [[], []]
         self.past_moves = []
         self.next_player = 0
-
-        self.piece_loc_tuples_updated = False
 
         self.__fill_board()
 
@@ -24,31 +22,25 @@ class Board:
     # Get Moves
     # ---------------
 
-    def get_piece_loc_tuples(self, player = None):
-        if not self.piece_loc_tuples_updated:
-            self.__update_piece_loc_tuples()
-        
-        if player == None:
-            all_tuples = []
-            all_tuples.extend(self.piece_loc_tuples[0])
-            all_tuples.extend(self.piece_loc_tuples[1])
-            return all_tuples
-        else:
-            return self.piece_loc_tuples[player]        
-
-
-    def __update_piece_loc_tuples(self):
-        if self.piece_loc_tuples_updated:
-            return
-        self.piece_loc_tuples_updated = True
-
-        self.piece_loc_tuples = [[], []]
-        for y in range(self.size):
-            for x in range(self.size):
+    def validate_positions(self):
+        for x in range(self.size):
+            for y in range(self.size):
                 tile = self.__get_tile(x, y)
                 if tile != None:
-                    self.piece_loc_tuples[tile.player].append((tile, x, y))
-        
+                    assert (tile.x == x and tile.y == y), "piece loc is not valid: %d, %d, %d, %d" % (tile.x, tile.y, x, y)
+
+    def get_piece_loc_tuples(self, player = None):
+        pieces = self.__get_pieces(player)
+        return [(piece, piece.x, piece.y) for piece in pieces]
+
+    def __get_pieces(self, player = None):
+        if player == None:
+            all_pieces = []
+            all_pieces.extend(self.pieces[0])
+            all_pieces.extend(self.pieces[1])
+            return all_pieces
+        else:
+            return self.pieces[player]
 
     def __get_piece_loc_tuples_for_next_player(self):
         return self.get_piece_loc_tuples(self.next_player)
@@ -148,19 +140,29 @@ class Board:
 
     def apply_move(self, move):
         self.past_moves.append(move)
-        self.piece_loc_tuples_updated = False
 
-        move.removed_piece = self.tiles[move.y2][move.x2]
+        if self.__opponent_piece_in_tile(move.x2, move.y2):
+            move.removed_piece = self.tiles[move.y2][move.x2]
+            self.__remove_piece(move.x2, move.y2)
+
+        self.tiles[move.y1][move.x1].move_to(move.x2, move.y2)
+
         self.tiles[move.y2][move.x2] = self.tiles[move.y1][move.x1]
         self.tiles[move.y1][move.x1] = None
+
         self.next_player = 1 - self.next_player
 
     def reverse_last_move(self):
         move = self.past_moves.pop()
-        self.piece_loc_tuples_updated = False
+
+        self.tiles[move.y2][move.x2].move_to(move.x1, move.y1)
 
         self.tiles[move.y1][move.x1] = self.tiles[move.y2][move.x2]
         self.tiles[move.y2][move.x2] = move.removed_piece
+        
+        if move.removed_piece != None:
+            self.__add_piece(move.removed_piece)
+
         self.next_player = 1 - self.next_player
 
     # ---------------
@@ -175,7 +177,6 @@ class Board:
         tile = self.__get_tile(x, y)
         return tile != None and self.next_player == tile.player
 
-
     def __get_tile(self, x, y):
         return self.tiles[y][x]
     
@@ -188,25 +189,32 @@ class Board:
 
             positions_config = piece_config['positions']
             for column in positions_config['columns']:
-                self.__add_piece(
+                
+                piece = Piece(piece_config['piece_str'],
+                    piece_config['points'],
+                    1,
                     column,
-                    positions_config['row'],
-                    Piece(
-                        piece_config['piece_str'],
-                        piece_config['points'],
-                        1
-                    ),
-                    mirror = True
+                    positions_config['row']
                 )
 
-    def __add_piece(self, x, y, piece, mirror=False):
-        self.pieces.append(piece)
-        self.tiles[y][x] = piece
+                self.__add_piece(piece, mirror = True)
+
+    def __add_piece(self, piece, mirror=False):
+        self.pieces[piece.player].append(piece)
+        self.tiles[piece.y][piece.x] = piece
 
         if mirror:
-            copy_piece = piece.copy()
-            copy_piece.player = 0
-            self.tiles[self.size - y - 1][x] = copy_piece
+            copy_piece = piece.mirrored_copy(self.size)
+            self.__add_piece(copy_piece)
+
+    def __remove_piece(self, x, y):
+        assert not self.__tile_is_empty(x, y), "Can not remove piece: Tile is empty."
+        piece = self.__get_tile(x, y)
+        for i, p in enumerate(self.pieces[piece.player]):
+            if p.id == piece.id:
+                del self.pieces[piece.player][i]
+                return
+            
 
     def __tile_on_board(self, x, y):
         if x < 0 or self.size <= x:
@@ -219,4 +227,8 @@ class Board:
         string = "    %s\n" % "  ".join([str(i) for i in range(self.size)])
         for y in range(self.size):
             string += "%d:  %s\n" % (y, " ".join(["--" if tile==None else str(tile) for tile in self.tiles[y]]))
+        for player in [0, 1]:
+            for piece in self.pieces[player]:
+                string += "%s " % piece
+            string += "\n"
         return string

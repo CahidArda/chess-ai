@@ -6,6 +6,7 @@ class Move:
         self.y1 = y1
         self.x2 = x2
         self.y2 = y2
+        self.removed_piece = None
 
     def __str__(self):
         return f"Move from ({self.x1}, {self.y1}) to ({self.x2}, {self.y2})"
